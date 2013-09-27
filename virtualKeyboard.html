@@ -1,6 +1,6 @@
 <html>
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>Virtual Keyboard - Leap</title>
 
     <script src="http://js.leapmotion.com/0.2.0/leap.min.js"></script>
@@ -80,9 +80,11 @@
         fingerObj.style.width= ""+zValue/3+"px";
         fingerObj.style.height= ""+zValue/3+"px";
 
+
+
         //set the position of the finger object on the screen based on x/y values from the leap
         var w=window.innerWidth;
-		    var h=window.innerHeight;
+        var h=window.innerHeight;
         //position starts in the middle of the window, moves up and down based on Leap data, and is centered based on size
         yperc = frame.pointables[0].tipPosition[2] / 200;
         xperc = frame.pointables[0].tipPosition[0] / 200;
@@ -113,6 +115,11 @@
         if( targetElement.className.indexOf("key") != -1){
           collString += "<br /> it is a key";
           setHover(targetElement, true);
+
+          if(zValue < 70){
+            keyClick(targetElement);
+          }
+
         }else{
           clearHovers();
         }
@@ -151,6 +158,14 @@
       $('.key').removeClass("blueBorderHover").addClass("blueBorder");
     }
 
+    function keyClick(obj){
+      var elemID = obj.id;
+      var elemString = $('#output').text();
+      elemString += elemID;
+
+      $('#output').text(elemString);
+    }
+
     function findPos(obj) {
 
       var curleft = curtop = 0;
@@ -171,25 +186,39 @@
     <!-----------------------------STYLES------------------>
     <style>
       .key{
-        height: 200px;
-        width: 200px;
+        height: 50px;
+        width: 50px;
 
         z-index: 100;
 
         text-align:center;
-        line-height:200px;
+        line-height:50px;
         color:#9ecaed;
-        font-size:36px;
+        font-size:24px;
         font-family: verdana;
 
-        position: fixed;
-        top: 200px;
-        left: 200px;
-        
-          
+
         outline: none;
-         
+
+        margin-left:25px;
+        float:left;
       }
+        .topRow{
+          position: absolute;
+          top: 200px;
+          left: 200px;
+        }
+        .middleRow{
+          position: absolute;
+          top: 300px;
+          left: 200px;
+        }
+        .bottomRow{
+          position: absolute;
+          top: 400px;
+          left: 200px;
+        }
+
         .blueBorder{
           border: 1px solid #9ecaed;
           box-shadow: 0 0 3px #9ecaed;
@@ -199,20 +228,32 @@
           box-shadow: 0 0 25px #9ecaed;
         }
 
-		.fingertip{
-			height: 20px;
-			width: 20px;
+    .fingertip{
+      height: 20px;
+      width: 20px;
 
       z-index: 50;
-			position: fixed;
-			top:0px;
-			left:0px;
+      position: fixed;
+      top:0px;
+      left:0px;
 
-			border: 1px solid #BF0000;
-    			border-radius:3px;
-			outline: none;
-    			box-shadow: 0 0 3px #BF0000;
-		}
+      border: 1px solid #BF0000;
+          border-radius:3px;
+      outline: none;
+          box-shadow: 0 0 3px #BF0000;
+
+    }
+      #fingerClickBox{
+        height:25px;
+        width:25px;
+        top:50%;
+        left:50%;
+        position:absolute;
+        margin-top:-12px;
+        margin-left:-12px;
+
+        background-color: rgba(128,0,0,0.24);
+      }
     #pointableData{
       color:#dddddd;
     }
@@ -226,15 +267,112 @@
       top:100px;
       left:800px;
     }
+
+    #output{
+      position:fixed;
+      top:150px;
+      left:200px;
+      width: 1000px;
+      font-size:12px;
+      color:#000000;
+      background-color:#dddddd;
+      overflow: auto;
+    }
+
     </style>
 </head>
 <body>
 
-	<div class="key blueBorder" id="a">
-		A
-	</div>
+  <div class="topRow">
+    <div class="key blueBorder" id="q">
+      Q
+    </div>
+    <div class="key blueBorder" id="w">
+      W
+    </div>
+    <div class="key blueBorder" id="e">
+      E
+    </div>
+    <div class="key blueBorder" id="r">
+      R
+    </div>
+    <div class="key blueBorder" id="t">
+      T
+    </div>
+    <div class="key blueBorder" id="y">
+      Y
+    </div>
+    <div class="key blueBorder" id="u">
+      U
+    </div>
+    <div class="key blueBorder" id="i">
+      I
+    </div>
+    <div class="key blueBorder" id="o">
+      O
+    </div>
+    <div class="key blueBorder" id="p">
+      P
+    </div>
+  </div>
 
-	<div id="fingertip" class="fingertip"></div>
+  <div class="middleRow">
+    <div class="key blueBorder" id="a">
+      A
+    </div>
+    <div class="key blueBorder" id="s">
+      S
+    </div>
+    <div class="key blueBorder" id="d">
+      D
+    </div>
+    <div class="key blueBorder" id="f">
+      F
+    </div>
+    <div class="key blueBorder" id="g">
+      G
+    </div>
+    <div class="key blueBorder" id="h">
+      H
+    </div>
+    <div class="key blueBorder" id="j">
+      J
+    </div>
+    <div class="key blueBorder" id="k">
+      K
+    </div>
+    <div class="key blueBorder" id="l">
+      L
+    </div>
+  </div>
+
+  <div class="bottomRow">
+    <div class="key blueBorder" id="z">
+      Z
+    </div>
+    <div class="key blueBorder" id="x">
+      X
+    </div>
+    <div class="key blueBorder" id="c">
+      C
+    </div>
+    <div class="key blueBorder" id="v">
+      V
+    </div>
+    <div class="key blueBorder" id="b">
+      B
+    </div>
+    <div class="key blueBorder" id="n">
+      N
+    </div>
+    <div class="key blueBorder" id="m">
+      M
+    </div>
+  </div>
+
+  <div id="fingertip" class="fingertip">
+    <div id="fingerClickBox"></div>
+  </div>
 
       <div id="pointableData"></div>
       <div style="clear:both;"></div>
@@ -242,6 +380,8 @@
   <div id="positionInfo"></div>
 
   <div id="collisionInfo"></div>
+
+  <div id="output"></div>
 
 
 </body>
