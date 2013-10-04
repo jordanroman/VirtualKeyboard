@@ -47,84 +47,71 @@
       var pointableOutput = document.getElementById("pointableData");
       var pointableString = "";
       if (frame.pointables.length > 0) {
+        for( var i = frame.pointables.length; i < 20; i++){
+          var objDOMName = "#fingertip"+i+"";
+          $(objDOMName).hide();
+        }
+
         for (var i = 0; i < frame.pointables.length; i++) {
           var pointable = frame.pointables[i];
 
-          pointableString += "<div style='width:250px; float:left; padding:5px'>";
-          pointableString += "Pointable ID: " + pointable.id + "<br />";
-          pointableString += "Belongs to hand with ID: " + pointable.handId + "<br />";
 
-          if (pointable.tool) {
-            pointableString += "Classified as a tool <br />";
-            pointableString += "Length: " + pointable.length.toFixed(1) + " mm<br />";
-            pointableString += "Width: "  + pointable.width.toFixed(1) + " mm<br />";
-          }
-          else {
-            pointableString += "Classified as a finger<br />";
-            pointableString += "Length: " + pointable.length.toFixed(1) + " mm<br />";
-          }
+          var fingerIdName = "fingertip"+i+"";//generate a unique name for the pointer object base on the leap object id
+          var fingerObj = document.getElementById(fingerIdName);
+          if( fingerObj == null){
+            $("#fingertip").clone().attr("id",fingerIdName).appendTo("body");//clone the base HTML object and assign it the unique id
+            var fingerObj = document.getElementById(fingerIdName);
+          }else{
+            $(fingerObj).show();
+          }   
 
-          pointableString += "Direction: " + vectorToString(pointable.direction, 2) + "<br />";
-          pointableString += "Tip position: " + vectorToString(pointable.tipPosition) + " mm<br />";
-          pointableString += "Tip velocity: " + vectorToString(pointable.tipVelocity) + " mm/s<br />";
-
-          pointableString += "</div>";
-        }
-
-        var pointable = frame.pointables[0];
-        var fingerObj = document.getElementById("fingertip");
-
-
-        //set the size of the finger pointing object based on the z-height from the Leap
-        var zValue = frame.pointables[0].tipPosition[1].toFixed(0);
-        fingerObj.style.width= ""+zValue/3+"px";
-        fingerObj.style.height= ""+zValue/3+"px";
+          //set the size of the finger pointing object based on the z-height from the Leap
+          var zValue = frame.pointables[i].tipPosition[1].toFixed(0);
+          fingerObj.style.width= ""+zValue/3+"px";
+          fingerObj.style.height= ""+zValue/3+"px";
 
 
 
-        //set the position of the finger object on the screen based on x/y values from the leap
-        var w=window.innerWidth;
-        var h=window.innerHeight;
-        //position starts in the middle of the window, moves up and down based on Leap data, and is centered based on size
-        yperc = frame.pointables[0].tipPosition[2] / 200;
-        xperc = frame.pointables[0].tipPosition[0] / 200;
-        var topPosition = (h /2) + ( (h/2) * yperc) - (zValue/2);
-        var leftPosition = (w /2) + ( (w/2) * xperc) - (zValue/2);
+          //set the position of the finger object on the screen based on x/y values from the leap
+          var w=window.innerWidth;
+          var h=window.innerHeight;
+          //position starts in the middle of the window, moves up and down based on Leap data, and is centered based on size
+          yperc = frame.pointables[i].tipPosition[2] / 200;
+          xperc = frame.pointables[i].tipPosition[0] / 200;
+          var topPosition = (h /2) + ( (h/2) * yperc) - (zValue/2);
+          var leftPosition = (w /2) + ( (w/2) * xperc) - (zValue/2);
 
-        //output data based on finger position
-        var positionString = "innerWidth: "+w+" innerHeight: "+h+"<br />";
-        positionString += "w/2: "+(w/2)+" h/2: "+(h/2)+"<br />";
-        positionString += "topPos: "+topPosition.toFixed(0)+" leftPos: "+leftPosition.toFixed(0)+"<br />";
-        positionString += "xMov: "+frame.pointables[0].tipPosition[2] + " yMov: "+frame.pointables[0].tipPosition[0]+"<br />";
-        document.getElementById("positionInfo").innerHTML = positionString;
+          //output data based on finger position
+          var positionString = "innerWidth: "+w+" innerHeight: "+h+"<br />";
+          positionString += "w/2: "+(w/2)+" h/2: "+(h/2)+"<br />";
+          positionString += "topPos: "+topPosition.toFixed(0)+" leftPos: "+leftPosition.toFixed(0)+"<br />";
+          positionString += "xMov: "+frame.pointables[i].tipPosition[2] + " yMov: "+frame.pointables[i].tipPosition[0]+"<br />";
+          document.getElementById("positionInfo").innerHTML = positionString;
 
-        //set the position of the html object
-        fingerObj.style.top = ""+topPosition.toFixed(0)+"px";
-        fingerObj.style.left = ""+leftPosition.toFixed(0)+"px";
+          //set the position of the html object
+          fingerObj.style.top = ""+topPosition.toFixed(0)+"px";
+          fingerObj.style.left = ""+leftPosition.toFixed(0)+"px";
 
 
-        var keyObj = document.getElementById("a");
+          var targetElement = document.elementFromPoint(leftPosition, topPosition);
 
-        var keyPost = findPos(keyObj);
+          var collString = "targetClassName = "+targetElement.className + "";
+          
 
-        var targetElement = document.elementFromPoint(leftPosition, topPosition);
+          if( targetElement.className.indexOf("key") != -1){
+            collString += "<br /> it is a key";
+            setHover(targetElement, true);
 
-        var collString = "targetClassName = "+targetElement.className + "";
-        
+            if(zValue < 70){
+              keyClick(targetElement);
+            }
 
-        if( targetElement.className.indexOf("key") != -1){
-          collString += "<br /> it is a key";
-          setHover(targetElement, true);
-
-          if(zValue < 70){
-            keyClick(targetElement);
+          }else{
+            clearHovers();
           }
 
-        }else{
-          clearHovers();
-        }
-
-        document.getElementById("collisionInfo").innerHTML = collString;
+          document.getElementById("collisionInfo").innerHTML = collString;
+      }
 
       }
       else {
@@ -200,7 +187,7 @@
 
         outline: none;
 
-        margin-left:25px;
+        margin-left:45px;
         float:left;
       }
         .topRow{
