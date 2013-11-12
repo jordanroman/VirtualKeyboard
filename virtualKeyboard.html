@@ -52,6 +52,7 @@
           $(objDOMName).hide();
         }
 
+        setPrevClasses();
         for (var i = 0; i < frame.pointables.length; i++) {
           var pointable = frame.pointables[i];
 
@@ -94,24 +95,23 @@
 
 
           var targetElement = document.elementFromPoint(leftPosition, topPosition);
-
-          var collString = "targetClassName = "+targetElement.className + "";
           
 
-          if( targetElement.className.indexOf("key") != -1){
-            collString += "<br /> it is a key";
+          if( targetElement.className != null && targetElement.className.indexOf("key") != -1){
+            
             setHover(targetElement, true);
 
-            if(zValue < 70){
+
+            if( (zValue < 100) && (! targetElement.className.indexOf("keyDown") != -1) ){
               keyClick(targetElement);
             }
 
           }else{
-            clearHovers();
+            
           }
-
-          document.getElementById("collisionInfo").innerHTML = collString;
-      }
+        }
+        clearPrevClasses();
+        executeActions();
 
       }
       else {
@@ -132,24 +132,40 @@
                  + vector[2].toFixed(digits) + ")";
     }
 
-    function setHover(obj, flag){
-      if(flag){//flag == true :: turn on hover mode
-          //obj.style.className = "key blueBorderHover";
-          $(obj).removeClass("blueBorder").addClass("blueBorderHover");
-      }else{//flag == false :: turn off hover
-          $(obj).removeClass("blueBorderHover").addClass("blueBorder");
-      }
+    function setHover(obj){
+      $(obj).addClass("hovered");
     }
 
-    function clearHovers(){
-      $('.key').removeClass("blueBorderHover").addClass("blueBorder");
+    function setPrevClasses(){
+      $('.hovered').addClass("prevHovered").removeClass("hovered");
+      $('.keyDown').addClass("prevKeyDown").removeClass("keyDown");
+    }
+    function clearPrevClasses(){
+      $('.key').each(function(){
+        if ( ! $( this ).hasClass("prevHovered") ){
+          $(this).removeClass("prevHovered").removeClass("blueBorderHover").addClass("blueBorder");
+        }
+        $(this).removeClass("prevKeyDown");
+      });
+    }
+    function executeActions(){
+      $('.key').each(function(){
+        if ( ! $( this ).hasClass("hovered") ){
+          $(this).addClass("blueBorderHover").removeClass("blueBorder");
+        }
+      });
+    }
+
+    function setkeyDown(obj){
+      $(obj).addClass("keyDown");
     }
 
     function keyClick(obj){
+      setkeyDown(obj);
       var elemID = obj.id;
       var elemString = $('#output').text();
       elemString += elemID;
-
+      $(obj).addClass("keyDown");
       $('#output').text(elemString);
     }
 
@@ -231,13 +247,13 @@
 
     }
       #fingerClickBox{
-        height:25px;
-        width:25px;
+        height:33px;
+        width:33px;
         top:50%;
         left:50%;
         position:absolute;
-        margin-top:-12px;
-        margin-left:-12px;
+        margin-top:-16px;
+        margin-left:-16px;
 
         background-color: rgba(128,0,0,0.24);
       }
